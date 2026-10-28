@@ -1,0 +1,43 @@
+SPARK AULA M4 — VALIDACIÓN DEL 28/10/2026
+
+Origen:
+https://github.com/iesataulfoargentasor/spark-cluster-mac-m4
+Árbol de origen consultado: 88b873f905a452f4498471ca50ff39d80b7088e5
+
+ENTORNO OBSERVADO
+Cliente Docker 29.4.1 darwin/arm64; Compose v5.1.3.
+Motor Docker linux/aarch64, 10 CPU y 8.321.712.128 bytes de memoria.
+Pruebas realizadas con Docker Desktop del Mac del usuario.
+Se utilizaron un proyecto temporal spark-aula-m4-check y puertos distintos
+para no detener ni modificar los stacks existentes.
+
+COMPROBADO EN ESTA VARIANTE
+- Construcción real de spark-aula-m4:4.0.1 sobre la imagen oficial fijada por digest.
+- docker compose config válido en perfiles spark y spark-single.
+- Sintaxis bash de preparar.sh, iniciar.sh, parar.sh y comprobar.sh.
+- Arranque saludable de master, dos workers y Jupyter.
+- Prueba con dos workers: OK, aarch64 en driver y executors,
+  hosts spark-worker-1 y spark-worker-2; ventas ES=30, FR=12.
+- Lectura de CSV, agregación, escritura y lectura de Parquet.
+- Ejecución completa del cuaderno con nbconvert, sin errores.
+- Cambio real de dos workers a uno mediante iniciar.sh ligero:
+  se retira el segundo worker.
+- comprobar.sh detecta un worker y termina con OK y arquitectura aarch64.
+
+AVISOS OBSERVADOS
+Spark mostró el aviso de biblioteca nativa Hadoop no disponible y utilizó
+las clases Java integradas. No impidió las pruebas CSV/Parquet.
+En el modo ligero, la prueba de barrera esperó inicialmente a que el
+executor registrase sus recursos; después terminó correctamente.
+No se presentó el aviso de imagen AMD64 en estas ejecuciones.
+
+ALCANCE
+Las pruebas usan el pequeño CSV incluido. No son una prueba de carga ni
+garantizan rendimiento con datos grandes, varias aplicaciones simultáneas,
+conectores externos o todas las bibliotecas nativas de Hadoop.
+No se han probado HDFS/Hive: pertenecen al otro stack.
+La suma de límites de contenedores es 4,5 GiB (ligero) y 6,5 GiB (clase);
+no equivale al consumo real ni incluye toda la sobrecarga de Docker.
+
+El ZIP incluye el cuaderno sin resultados, un workspace limpio y .env.example;
+no incluye los datos generados durante las pruebas ni el .env temporal.
